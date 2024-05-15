@@ -42,6 +42,17 @@ class App:
         self.start_button = tk.Button(root, text="开始抓包", command=self.start_sniffing)
         self.start_button.pack(pady=10)
 
+        # 捕获窗口关闭事件
+        self.root.protocol("WM_DELETE_WINDOW", self.on_close)
+
+    def on_close(self):
+        if self.is_sniffing:
+            if messagebox.askokcancel("确认", "抓包正在进行中，确定要终止吗？"):
+                self.sniffer.stop_sniffing()
+                self.root.destroy()
+        else:
+            self.root.destroy()
+
     def start_sniffing(self):
         if not self.is_sniffing:
             self.sniffer_thread = threading.Thread(target=self.sniffer.start_sniffing)
